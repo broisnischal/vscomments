@@ -10,34 +10,23 @@
     "Other"
   ],
   "activationEvents": [
-    "*"
+    "onCommand:viewComments"
   ],
   "main": "./out/extension.js",
   "contributes": {
-    "viewsWelcome": [
-      {
-        "view": "comments",
-        "contents": "Here you can navigate through all the comments you have in your file, and go to that line!",
-        "markdown": true,
-        "when": "true"
-      }
-    ],
     "commands": [
       {
-        "command": "viewComments",
-        "title": "View Comments",
-        "category": "Comments"
-      },
-      {
-        "command": "comments.refresh",
+        "command": "comments.refreshComments",
         "title": "Refresh",
-        "category": "Comments"
+        "icon": {
+          "light": "media/refresh.svg"
+        }
       }
     ],
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "comments",
+          "id": "viewComments",
           "title": "Comments",
           "icon": "media/comment.svg"
         }
@@ -48,7 +37,7 @@
         {
           "id": "comments",
           "name": "Comments",
-          "icon": "media/comment.svg",
+          "icon": "media/box.svg",
           "contextualTitle": "Comments"
         }
       ]
@@ -56,7 +45,7 @@
     "menus": {
       "view/title": [
         {
-          "command": "viewComments",
+          "command": "comments.refreshComments",
           "group": "navigation",
           "when": "view == comments"
         }
