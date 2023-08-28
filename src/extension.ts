@@ -54,9 +54,9 @@ class CommentTreeDataProvider implements vscode.TreeDataProvider<Comment> {
         : vscode.TreeItemCollapsibleState.None;
 
     return {
-      //   label: `${element.line + 1} : `,
+      label: `${element.line + 1} : `,
       tooltip: element.text,
-      description: element.text.trim().slice(0, 50).replace("//", ""),
+      description: element.text.trim().slice(0, 50).replace("//", "") + "...",
       collapsibleState: collapsibleState,
       command: {
         command: "comments.navigateToLine",
