@@ -38,7 +38,7 @@ class CommentTreeDataProvider implements vscode.TreeDataProvider<Comment> {
           indentLevel--;
         }
 
-        if (indentLevel === 0 && text.includes("//")) {
+        if (indentLevel === 0 && text.includes("//") && text.trim().replace("//", "")) {
           this._comments.push(new Comment(text, line, indentLevel));
         }
       }
@@ -87,6 +87,8 @@ class CommentTreeDataProvider implements vscode.TreeDataProvider<Comment> {
 }
 
 export function activate(context: vscode.ExtensionContext) {
+  let activeEditor = vscode.window.activeTextEditor;
+
   console.log('Congratulations, your extension "learning" is now active!');
   let treeDataProvider = new CommentTreeDataProvider();
 
@@ -118,7 +120,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.commands.registerCommand("comments.refresh", () => {
-      // treeDataProvider = new CommentTreeDataProvider();
+      treeDataProvider = new CommentTreeDataProvider();
       treeDataProvider.refresh();
       //   treeView.title = `Comments reloaded`;
       //   setTimeout(() => {
@@ -136,6 +138,59 @@ export function activate(context: vscode.ExtensionContext) {
       }, 3000);
     }
   });
+
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeTextDocument((e) => {
+      if (e.document === activeEditor?.document) {
+        treeDataProvider.refresh();
+      }
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.window.onDidChangeActiveTextEditor((editor) => {
+      activeEditor = editor;
+      if (editor) {
+        treeDataProvider.refresh();
+      }
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("viewComments", () => {
+      const viewPanel = vscode.window.createWebviewPanel(
+        "comments",
+        "Comments",
+        vscode.ViewColumn.Active,
+        {
+          enableScripts: true,
+          retainContextWhenHidden: true,
+        }
+      );
+
+      viewPanel.title = "All comments";
+
+      const thisFileTexts = vscode.window.activeTextEditor?.document.getText();
+      const thisFileLines = thisFileTexts?.split("\n");
+      const thisFileComments: Comment[] = [];
+      thisFileLines?.forEach((line, index) => {
+        if (line.includes("/*")) {
+          thisFileComments.push(new Comment(line, index, 0));
+        }
+      });
+
+      viewPanel.webview.html = `
+		<html>
+		<body>
+		${thisFileTexts}
+			${thisFileComments.map((comment) => {
+        return `<p>${comment.text}</p>`;
+      })}
+		</body>
+		</html>
+	  `;
+    })
+  );
 
   context.subscriptions.push(saveDisposable);
 }
