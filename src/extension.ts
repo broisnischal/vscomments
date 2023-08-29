@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 import CommentTreeDataProvider from "./commentTreeDataProvider";
-import Comment from "./Comment";
 import CommentTreeView from "./CommentTreeView";
 import { viewComment } from "./ViewComment";
 

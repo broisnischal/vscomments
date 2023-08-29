@@ -27,12 +27,12 @@ export default class CommentTreeView {
         // vscode.window.showTextDocument(vscode.Uri.parse(`file:///${line}`));
         const editor = vscode.window.activeTextEditor;
         if (editor) {
+          editor.revealRange(
+            new vscode.Range(new vscode.Position(line, 0), new vscode.Position(line, 0))
+          );
           editor.selection = new vscode.Selection(
             new vscode.Position(line, 0),
             new vscode.Position(line, 0)
-          );
-          editor.revealRange(
-            new vscode.Range(new vscode.Position(line, 0), new vscode.Position(line, 0))
           );
         }
       })
